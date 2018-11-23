@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import ViewBtn from "../components/ViewBtn";
 import DeleteBtn from "../components/DeleteBtn";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
@@ -28,6 +29,12 @@ class Books extends Component {
   };
 
   deleteBook = id => {
+    API.deleteBook(id)
+      .then(res => this.loadBooks())
+      .catch(err => console.log(err));
+  };
+
+  viewBook = id => {
     API.deleteBook(id)
       .then(res => this.loadBooks())
       .catch(err => console.log(err));
@@ -100,8 +107,12 @@ class Books extends Component {
                       <strong>
                         {book.title} by {book.author}
                       </strong>
+                      <strong>by: {book.author}</strong>
                     </Link>
+                    <strong>by: {book.author}</strong>
+
                     <DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                    <ViewBtn onClick={() => this.viewBook(book._id)} />
                   </ListItem>
                 ))}
               </List>
