@@ -1,0 +1,15 @@
+.delete-btn {
+    float: right;
+    color: #e74944;
+}
+
+.view-btn {
+  float: right;
+  color: green;
+}
+
+.save-btn {
+  float: right;
+  color: yellow;
+}
+  

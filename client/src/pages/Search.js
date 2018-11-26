@@ -1,43 +1,47 @@
 import React, { Component } from "react";
-import ViewBtn from "../components/ViewBtn";
-import DeleteBtn from "../components/DeleteBtn";
+import { ViewBtn, SaveBtn } from "../components/Buttons";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
-import { Link } from "react-router-dom";
+import googleAPI from "../utils/googleAPI";
 import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
+import { Input, FormBtn } from "../components/Form";
 
 
 class Books extends Component {
     state = {
         books: [],
-        title: "",
-        author: "",
-        synopsis: ""
+        priorSearch: "",
+        title: ""
     };
 
-    componentDidMount() {
-        this.loadBooks();
+    formatGoogleSearch = data => {
+        const bookStateArray = [];
+
+        data.items.forEach(item => {
+            console.log(item);
+            const info = item.volumeInfo;
+
+            const dummyBookArray = {
+                googleID: item.id,
+                title: info.title,
+                authors: info.authors,
+                synopsis: info.description,
+                image: info.imageLinks.thumbnail,
+                link: info.infoLink,
+                date: info.publishedDate
+            };
+
+            bookStateArray.push(dummyBookArray);
+        })
+
+        this.setState({ books: bookStateArray, title: "" })
     }
 
-    loadBooks = () => {
-        API.getBooks()
-            .then(res =>
-                this.setState({ books: res.data, title: "", author: "", synopsis: "" })
-            )
-            .catch(err => console.log(err));
-    };
 
-    deleteBook = id => {
-        API.deleteBook(id)
-            .then(res => this.loadBooks())
-            .catch(err => console.log(err));
-    };
-
-    viewBook = id => {
-        API.deleteBook(id)
-            .then(res => this.loadBooks())
+    saveBook = id => {
+        API.saveBook(id)
+            .then(res => console.log(res))
             .catch(err => console.log(err));
     };
 
@@ -48,18 +52,19 @@ class Books extends Component {
         });
     };
 
-    handleFormSubmit = event => {
+    searchBookButton = event => {
         event.preventDefault();
-        if (this.state.title && this.state.author) {
-            API.saveBook({
-                title: this.state.title,
-                author: this.state.author,
-                synopsis: this.state.synopsis
-            })
-                .then(res => this.loadBooks())
-                .catch(err => console.log(err));
-        }
-    };
+        this.searchBook();
+    }
+
+    searchBook = event => {
+        event.preventDefault();
+
+        googleAPI.searchBook(this.state.title)
+            .then(res => this.formatGoogleSearch(res.data))
+            .catch(err => console.log(err));
+    }
+
 
     render() {
         return (
@@ -81,8 +86,8 @@ class Books extends Component {
                                 placeholder="Title (required)"
                             />
                             <FormBtn
-                                disabled={!(this.state.author && this.state.title)}
-                                onClick={this.handleFormSubmit}
+                                disabled={!(this.state.title)}
+                                onClick={this.searchBook}
                             >Search
                             </FormBtn>
                         </form>
@@ -93,28 +98,40 @@ class Books extends Component {
                         {this.state.books.length ? (
                             <List>
                                 {this.state.books.map(book => (
-                                    <ListItem key={book._id}>
+                                    <ListItem key={book.googleID}>
                                         <Row>
-                                            <Col size="md-6 sm-12">
-                                                <Link to={"/books/" + book._id}>
-                                                    <strong>
-                                                        {book.title}
-                                                    </strong>
-                                                </Link>
+                                            <Col size="md-2">
+                                                <img src={book.image} alt={book.title}></img>
                                             </Col>
-                                            <Col size="md-6 sm-12">
-                                                <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                                                <ViewBtn onClick={() => this.viewBook(book._id)} />
+                                            <Col size="md-10 sm-12">
+                                                <Row>
+                                                    <Col size="md-6 sm-12">
+                                                        <a href={book.link} target="_blank">
+                                                            <strong>
+                                                                {book.title}
+                                                            </strong>
+                                                        </a>
+                                                    </Col>
+                                                    <Col size="md-6 sm-12">
+                                                        <SaveBtn onClick={() => this.saveBook(book)} />
+                                                        <a href={book.link} target="_blank">
+                                                            <ViewBtn />
+                                                        </a>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col size="md-12">
+                                                        <strong>by {book.authors}</strong>
+                                                        <p>{book.synopsis}</p>
+                                                    </Col>
+                                                </Row>
                                             </Col>
                                         </Row>
-                                        <strong>by {book.author}</strong>
-                                        <p>{book.synopsis}</p>
-
                                     </ListItem>
                                 ))}
                             </List>
                         ) : (
-                                <h3>No Results to Display</h3>
+                                <h3>Search for a book!</h3>
                             )}
                     </Col>
                 </Row>

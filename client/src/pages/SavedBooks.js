@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import ViewBtn from "../components/ViewBtn";
-import DeleteBtn from "../components/DeleteBtn";
+import { ViewBtn, DeleteBtn } from "../components/Buttons"
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
 import { Link } from "react-router-dom";
@@ -69,29 +68,45 @@ class Books extends Component {
                         </Jumbotron>
                         {this.state.books.length ? (
                             <List>
-                                {this.state.books.map(book => (
-                                    <ListItem key={book._id}>
-                                        <Row>
-                                            <Col size="md-6 sm-12">
-                                                <Link to={"/books/" + book._id}>
-                                                    <strong>
-                                                        {book.title}
-                                                    </strong>
-                                                </Link>
-                                            </Col>
-                                            <Col size="md-6 sm-12">
+                            {this.state.books.map(book => (
+                                <ListItem key={book.googleID}>
+                                    <Row>
+                                        <Col size="md-2">
+                                            <img src={book.image} alt={book.title}></img>
+                                        </Col>
+                                        <Col size="md-10 sm-12">
+                                            <Row>
+                                                <Col size="md-6 sm-12">
+                                                    <a href={book.link} target="_blank">
+                                                        <strong>
+                                                            {book.title}
+                                                        </strong>
+                                                    </a>
+                                                </Col>
+                                                <Col size="md-6 sm-12">
                                                 <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                                                <ViewBtn onClick={() => this.viewBook(book._id)} />
-                                            </Col>
-                                        </Row>
-                                        <strong>by {book.author}</strong>
-                                        <p>{book.synopsis}</p>
-
-                                    </ListItem>
+                                                    <a href={book.link} target="_blank">
+                                                        <ViewBtn />
+                                                    </a>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col size="md-12">
+                                                    <strong>by {book.authors}</strong>
+                                                    <p>{book.synopsis}</p>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                </ListItem>
                                 ))}
                             </List>
                         ) : (
-                                <h3>No Results to Display</h3>
+                                <div>
+                                    <h3>No Saved books to Display</h3>
+                                    <h3>Go Save some!</h3>
+                                </div>
+
                             )}
                     </Col>
                 </Row>
