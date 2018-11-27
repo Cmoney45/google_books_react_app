@@ -71,10 +71,10 @@ class Books extends Component {
                             {this.state.books.map(book => (
                                 <ListItem key={book.googleID}>
                                     <Row>
-                                        <Col size="md-2">
+                                        <Col size="md-1">
                                             <img src={book.image} alt={book.title}></img>
                                         </Col>
-                                        <Col size="md-10 sm-12">
+                                        <Col size="md-11 sm-12">
                                             <Row>
                                                 <Col size="md-6 sm-12">
                                                     <a href={book.link} target="_blank">
