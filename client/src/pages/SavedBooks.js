@@ -32,30 +32,11 @@ class Books extends Component {
             .catch(err => console.log(err));
     };
 
-    viewBook = id => {
-        API.deleteBook(id)
-            .then(res => this.loadBooks())
-            .catch(err => console.log(err));
-    };
-
     handleInputChange = event => {
         const { name, value } = event.target;
         this.setState({
             [name]: value
         });
-    };
-
-    handleFormSubmit = event => {
-        event.preventDefault();
-        if (this.state.title && this.state.author) {
-            API.saveBook({
-                title: this.state.title,
-                author: this.state.author,
-                synopsis: this.state.synopsis
-            })
-                .then(res => this.loadBooks())
-                .catch(err => console.log(err));
-        }
     };
 
     render() {
@@ -68,37 +49,37 @@ class Books extends Component {
                         </Jumbotron>
                         {this.state.books.length ? (
                             <List>
-                            {this.state.books.map(book => (
-                                <ListItem key={book.googleID}>
-                                    <Row>
-                                        <Col size="md-1">
-                                            <img src={book.image} alt={book.title}></img>
-                                        </Col>
-                                        <Col size="md-11 sm-12">
-                                            <Row>
-                                                <Col size="md-6 sm-12">
-                                                    <a href={book.link} target="_blank">
-                                                        <strong>
-                                                            {book.title}
-                                                        </strong>
-                                                    </a>
-                                                </Col>
-                                                <Col size="md-6 sm-12">
-                                                <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                                                    <a href={book.link} target="_blank">
-                                                        <ViewBtn />
-                                                    </a>
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col size="md-12">
-                                                    <strong>by {book.authors}</strong>
-                                                    <p>{book.synopsis}</p>
-                                                </Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-                                </ListItem>
+                                {this.state.books.map(book => (
+                                    <ListItem key={book._id}>
+                                        <Row>
+                                            <Col size="md-2 ">
+                                                <img src={book.image} alt={book.title}></img>
+                                            </Col>
+                                            <Col size="md-10 sm-12">
+                                                <Row>
+                                                    <Col size="md-6 sm-12">
+                                                        <a href={book.link} target="_blank">
+                                                            <strong>
+                                                                {book.title}
+                                                            </strong>
+                                                        </a>
+                                                    </Col>
+                                                    <Col size="md-6 sm-12">
+                                                        <DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                                                        <Link to={"/books/" + book._id}>
+                                                            <ViewBtn />
+                                                        </Link>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col size="md-12">
+                                                        <strong>by {book.authors}</strong>
+                                                        <p>{book.synopsis}</p>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                    </ListItem>
                                 ))}
                             </List>
                         ) : (

@@ -10,7 +10,7 @@ const NoteSchema = new Schema({
   },
   article: {
     type: Schema.Types.ObjectId,
-    ref: "Article"
+    ref: "Book"
     }
 });
 
