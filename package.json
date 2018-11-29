@@ -20,6 +20,7 @@
     "nodemon": "^1.11.0"
   },
   "dependencies": {
+    "@mars/heroku-js-runtime-env": "^3.0.2",
     "axios": "^0.16.2",
     "dotenv": "^6.1.0",
     "express": "^4.16.3",
