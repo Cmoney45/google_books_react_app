@@ -2,3 +2,5 @@ node_modules
 client/node_modules
 client/.env
 .vscode
+build/static/css/*.map
+build/static/js/*.map
