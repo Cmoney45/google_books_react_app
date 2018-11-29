@@ -8,7 +8,7 @@ const NoteSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  article: {
+  book: {
     type: Schema.Types.ObjectId,
     ref: "Book"
     }

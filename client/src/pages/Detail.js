@@ -10,6 +10,7 @@ class Detail extends Component {
     book: {},
     comment: ""
   };
+
   handleInputChange = event => {
     const { name, value } = event.target;
     this.setState({
@@ -17,24 +18,36 @@ class Detail extends Component {
     });
   };
 
-  handleFormSubmit = event => {
+  handleNoteSubmit = event => {
     event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
-      })
-        .then(res => this.loadBooks())
+    if (this.state.comment) {
+      API.saveBookNote(
+        this.state.book._id,
+        {
+          body: this.state.comment,
+          book: this.state.book._id
+        })
+        .then(res => this.loadBookdata())
         .catch(err => console.log(err));
     }
   };
 
+  deleteNote = id => {
+    API.deleteNote(id)
+      .then(res => this.loadBookdata())
+      .catch(err => console.log(err));
+  }
+
   // When this component mounts, grab the book with the _id of this.props.match.params.id
   componentDidMount() {
+    this.loadBookdata()
+  }
+
+  loadBookdata() {
+    this.setState({ comment: "" })
     API.getBook(this.props.match.params.id)
-      .then(res => this.setState({ book: res.data }))
-      .catch(err => console.log(err));
+    .then(res => this.setState({ book: res.data }))
+    .catch(err => console.log(err));
   }
 
   render() {
@@ -50,8 +63,7 @@ class Detail extends Component {
             <Jumbotron>
               <Row>
                 <Col size="sm-2">
-                  <img src={this.state.book.image}></img>
-
+                  <img src={this.state.book.image} alt={this.state.book.title}></img>
                 </Col>
                 <Col size="md-8 sm-12">
                   <h1>
@@ -76,15 +88,23 @@ class Detail extends Component {
           </Col>
         </Row>
         <Row>
-          {this.state.book.note ? (
-            <div>
-              {this.state.book.note.map(note => (
-                <div>{this.state.book.note}</div>
+          {this.state.book.notes ? (
+            <Col size="md-12">
+              {this.state.book.notes.map(note => (
+                <div className="navbar" key={note._id}>
+                  <a className="navabar-brand">
+                    {note.body}
+                  </a>
+                  <button 
+                  className="form-inline btn btn-danger"
+                  onClick={() => this.deleteNote(note._id)}
+                  >X</button>
+                </div>
               ))}
-            </div>
+            </Col>
           ) : (
               <div>
-                <h3>No comments on this books</h3>
+                <h3>No comments on this book!</h3>
               </div>
             )}
         </Row>
@@ -99,8 +119,8 @@ class Detail extends Component {
               >
               </TextArea>
               <FormBtn
-                disabled={!(this.state.author && this.state.title)}
-                onClick={this.handleFormSubmit}
+                disabled={!(this.state.comment)}
+                onClick={this.handleNoteSubmit}
               >Submit Comment
             </FormBtn>
             </form>
