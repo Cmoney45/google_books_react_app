@@ -21,13 +21,17 @@ class Books extends Component {
         data.items.forEach(item => {
             console.log(item);
             const info = item.volumeInfo;
+            let thumnailImage = "//via.placeholder.com/128x160"
+            if (info.imageLinks) {
+                thumnailImage = info.imageLinks.thumbnail;
+            };
 
             const dummyBookArray = {
                 googleID: item.id,
                 title: info.title,
                 authors: info.authors,
                 synopsis: info.description,
-                image: info.imageLinks.thumbnail,
+                image: thumnailImage,
                 link: info.infoLink,
                 date: info.publishedDate
             };
@@ -100,10 +104,10 @@ class Books extends Component {
                                 {this.state.books.map(book => (
                                     <ListItem key={book.googleID}>
                                         <Row>
-                                            <Col size="md-1">
+                                            <Col size="md-2">
                                                 <img src={book.image} alt={book.title}></img>
                                             </Col>
-                                            <Col size="md-11 sm-12">
+                                            <Col size="md-10 sm-12">
                                                 <Row>
                                                     <Col size="md-6 sm-12">
                                                         <a href={book.link} target="_blank">
